@@ -1,17 +1,22 @@
-package com.demo.service.excel;
+package com.demo.services.excel;
 
 import com.demo.entities.Boy;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class ExcelServiceImpl implements ExcelService{
 
     public void writeData(String pathname, String templateFile, List<Boy> listBoy) throws Exception {
@@ -82,6 +87,75 @@ public class ExcelServiceImpl implements ExcelService{
             throw new Exception(e);
         }
     }
+
+    public void readData(String pathname) throws IOException {
+
+        File file = new File(pathname);
+        FileInputStream input = null;
+        try {
+            input = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        XSSFWorkbook workbook = new XSSFWorkbook(input);
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        Cell out = null;
+        Iterator<Row> rowIterator = sheet.iterator();
+
+
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+
+            Iterator<Cell> cellIterator = row.cellIterator();
+
+            while (cellIterator.hasNext()) {
+                Cell cell = cellIterator.next();
+
+                CellType cellType = cell.getCellType();
+
+                switch (cellType) {
+                    case _NONE:
+                        System.out.print("");
+                        System.out.print("\t");
+                        break;
+                    case BOOLEAN:
+                        System.out.print(cell.getBooleanCellValue());
+                        System.out.print("\t");
+                        break;
+                    case BLANK:
+                        System.out.print("");
+                        System.out.print("\t");
+                        break;
+                    case FORMULA:
+
+                        System.out.print(cell.getCellFormula());
+                        System.out.print("\t");
+
+                        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
+                        System.out.print(evaluator.evaluate(cell).getNumberValue());
+                        break;
+                    case NUMERIC:
+                        System.out.printf("%-10.0f", cell.getNumericCellValue());
+                        System.out.print("\t");
+                        break;
+                    case STRING:
+                        System.out.printf("%-18s", cell.getStringCellValue());
+                        System.out.print("\t");
+                        break;
+                    case ERROR:
+                        System.out.print("!");
+                        System.out.print("\t");
+                        break;
+                }
+
+            }
+            System.out.println("");
+        }
+        workbook.close();
+
+    }
+
     public Row getRow(String pathname,Integer rowNum) throws Exception {
         File file = new File(pathname);
 

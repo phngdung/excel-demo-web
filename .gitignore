@@ -36,5 +36,8 @@ out/
 ### VS Code ###
 .vscode/
 
-#properties
-application.properties
+#json
+.json
+
+#xlsx
+.xlsx

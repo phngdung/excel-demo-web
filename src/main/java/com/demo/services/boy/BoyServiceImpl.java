@@ -1,4 +1,4 @@
-package com.demo.service.boy;
+package com.demo.services.boy;
 
 import com.demo.entities.Boy;
 import org.springframework.stereotype.Service;
@@ -28,8 +28,7 @@ public class BoyServiceImpl implements BoyService {
         List<Boy> listBoy = new ArrayList<>();
         Boy boy;
         Random rand = new Random();
-        String name = new String();
-        String city = new String();
+        String name, city;
         for (int i = 1; i <= numOfData; i++) {
             name = firstname[rand.nextInt(firstname.length)];
             name += " " + (lastname[rand.nextInt(lastname.length)]);

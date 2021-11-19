@@ -1,4 +1,4 @@
-package com.demo.service.boy;
+package com.demo.services.boy;
 
 import com.demo.entities.Boy;
 

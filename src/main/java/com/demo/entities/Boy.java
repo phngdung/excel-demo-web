@@ -1,5 +1,6 @@
 package com.demo.entities;
 
+import com.demo.controllers.DTO.AddBoyRequest;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -10,8 +11,7 @@ import javax.persistence.GenerationType;
 public class Boy {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "boy_generator")
-    @SequenceGenerator(name = "boy_generator", sequenceName = "boy_seq", allocationSize = 500)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
@@ -111,5 +111,15 @@ public class Boy {
         this.skill = skill;
     }
 
+    public Boy(AddBoyRequest addBoyRequest) {
+        this.name = addBoyRequest.getName();
+        this.age = addBoyRequest.getAge();
+        this.city = addBoyRequest.getCity();
+        this.height = addBoyRequest.getHeight();
+        this.weight = addBoyRequest.getWeight();
+        this.hobbit = addBoyRequest.getHobbit();
+        this.hairColor = addBoyRequest.getHairColor();
+        this.skill = addBoyRequest.getSkill();
+    }
 
 }
