@@ -1,6 +1,7 @@
 package com.demo.services.excel;
 
 import com.demo.entities.Boy;
+import com.demo.services.json.JsonService;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -10,10 +11,17 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.json.JsonString;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.swing.*;
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -21,7 +29,10 @@ import java.util.logging.Logger;
 public class ExcelServiceImpl implements ExcelService {
     Logger logger = Logger.getLogger(this.getClass().getName());
 
-    public void writeData(String pathname, String templateFile, List<Boy> listBoy) throws Exception {
+    @Autowired
+    JsonService jsonService;
+
+    public void writeFromObject(String pathname, String templateFile, List<Boy> listBoy) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet1");
 
@@ -50,7 +61,6 @@ public class ExcelServiceImpl implements ExcelService {
             tittles[i] = header;
             cell = row.createCell(colCount++);
         }
-
 
         //set data rows
         Row templateRow = getRow(templateFile, 1);
@@ -173,7 +183,7 @@ public class ExcelServiceImpl implements ExcelService {
         return headerRow;
     }
 
-    public FileOutputStream writeFromJson(String pathname, String templateFile, JSONArray jsonArray) throws Exception {
+    public ServletOutputStream writeFromJson(ServletOutputStream outputStream, String templateFile, JSONArray jsonArray) throws Exception {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = workbook.createSheet("Sheet1");
@@ -204,7 +214,6 @@ public class ExcelServiceImpl implements ExcelService {
             cell = row.createCell(colCount++);
         }
 
-
         //set data rows
         Row templateRow = getRow(templateFile, 1);
 
@@ -225,14 +234,32 @@ public class ExcelServiceImpl implements ExcelService {
                 cell.setCellValue(rec.get(tittles[j].toLowerCase().replace(" ", "")).toString());
             }
         }
-
-        try (FileOutputStream outputStream = new FileOutputStream(pathname)) {
-            workbook.write(outputStream);
-            logger.info("Write completed");
-            return  outputStream;
-        } catch (IOException e) {
-            logger.info("Write error");
-            throw new Exception(e);
-        }
+        workbook.write(outputStream);
+        logger.info("Write completed");
+        return outputStream;
     }
+    public void export (HttpServletResponse response, List<Boy> boyList) throws Exception{
+        //        Write Json
+        jsonService.writeJson("boy.json", boyList);
+        JSONParser parser = new JSONParser();
+        JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("boy.json"));
+
+//  Write excel
+        final JFileChooser fc = new JFileChooser();
+        response.setContentType("application/octet-stream");
+        DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
+        String currentDateTime = dateFormatter.format(new Date());
+
+        String headerKey = "Content-Disposition";
+        String headerValue = "attachment; filename=boys_" + currentDateTime + ".xlsx";
+        response.setHeader(headerKey, headerValue);
+
+        ServletOutputStream outputStream = response.getOutputStream();
+
+        ServletOutputStream file = writeFromJson(outputStream, "template.xlsx", jsonArray);
+
+        outputStream.close();
+
+    }
+
 }

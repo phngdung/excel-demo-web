@@ -8,20 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HomeController {
 
-    @GetMapping("/")
-    public String index() {
-        System.out.print("Greetings from Spring Boot!");
-        return "Greetings from Spring Boot!";
-    }
-
-    @RequestMapping("/boys")
+    @RequestMapping("/")
     public String getBoy() {
-        return "Greetings from Spring Boot!";
-    }
-
-    @RequestMapping(value = "/custom", method = RequestMethod.POST)
-    public String custom() {
-        return "custom";
+        return "Greetings from Dung!";
     }
 
 }

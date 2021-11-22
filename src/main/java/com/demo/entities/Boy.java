@@ -97,7 +97,9 @@ public class Boy {
     }
 
     public Boy() {
-    };
+    }
+
+    ;
 
     public Boy(Integer id, String name, Integer age, String city, Float height, Float weight, String hobbit, String hairColor, String skill) {
         this.id = id;
