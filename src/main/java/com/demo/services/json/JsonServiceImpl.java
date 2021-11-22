@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 public class JsonServiceImpl implements JsonService {
-    public void writeJson(String pathname, List<Boy> boyList) throws IOException {
+    public JSONArray toJson(List<Boy> boyList) throws IOException {
         JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < boyList.size(); i++) {
             JSONObject boyDetails = new JSONObject();
@@ -27,26 +27,27 @@ public class JsonServiceImpl implements JsonService {
             boyDetails.put("height", boy.getHeight());
             boyDetails.put("weight", boy.getWeight());
             boyDetails.put("hobbit", boy.getHobbit());
-            boyDetails.put("hairColor", boy.getHairColor());
+            boyDetails.put("haircolor", boy.getHairColor());
             boyDetails.put("skill", boy.getSkill());
             jsonArray.add(boyDetails);
         }
 
-        File existFile = new File(pathname);
-        FileWriter file = new FileWriter(pathname);
+//        File existFile = new File(pathname);
+//        FileWriter file = new FileWriter(pathname);
 
         //Write new JSON file
-        if (existFile.exists()) {
-            file.write(jsonArray.toJSONString());
-            file.flush();
-        }
-        //Append JSON file exists
-        else {
-            BufferedWriter bw = new BufferedWriter(file);
-            bw.write(jsonArray.toJSONString());
-            bw.newLine();
-            bw.close();
-        }
+//        if (existFile.exists()) {
+//            file.write(jsonArray.toJSONString());
+//            file.flush();
+//        }
+//        //Append JSON file exists
+//        else {
+//            BufferedWriter bw = new BufferedWriter(file);
+//            bw.write(jsonArray.toJSONString());
+//            bw.newLine();
+//            bw.close();
+//        }
+        return jsonArray;
 
     }
 

@@ -8,16 +8,18 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
+import javax.json.JsonString;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.logging.Logger;
 
 @Service
-public class ExcelServiceImpl implements ExcelService{
+public class ExcelServiceImpl implements ExcelService {
+    Logger logger = Logger.getLogger(this.getClass().getName());
 
     public void writeData(String pathname, String templateFile, List<Boy> listBoy) throws Exception {
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -30,13 +32,13 @@ public class ExcelServiceImpl implements ExcelService{
         Cell cell = row.createCell(colCount++);
 
         //set header row
-        Row templateHeaderRow= getRow(templateFile,0);
+        Row templateHeaderRow = getRow(templateFile, 0);
         int lastCell = templateHeaderRow.getLastCellNum();
         String[] tittles = new String[lastCell];
 
         for (int i = 0; i < lastCell; i++) {
             Cell oldCell = templateHeaderRow.getCell(i);
-            String header= oldCell.getStringCellValue();
+            String header = oldCell.getStringCellValue();
 
             //set header cell style
             XSSFCellStyle newCellStyle = workbook.createCellStyle();
@@ -51,27 +53,26 @@ public class ExcelServiceImpl implements ExcelService{
 
 
         //set data rows
-        Row templateRow= getRow(templateFile,1);
+        Row templateRow = getRow(templateFile, 1);
         for (int i = 0; i < listBoy.size(); i++) {
             Boy boy = listBoy.get(i);
             Map<String, String> element = new HashMap<>();
-            element.put("ID", boy.getId()+"");
-            element.put("Name", boy.getName() );
-            element.put("Age", boy.getAge().toString() );
-            element.put("City", boy.getCity() );
-            element.put("Height", boy.getHeight().toString() );
-            element.put("Weight", boy.getWeight().toString() );
-            element.put("Hobbit", boy.getHobbit().toString() );
-            element.put("Hair color", boy.getHairColor() );
-            element.put("Skill", boy.getSkill() );
+            element.put("ID", boy.getId() + "");
+            element.put("Name", boy.getName());
+            element.put("Age", boy.getAge().toString());
+            element.put("City", boy.getCity());
+            element.put("Height", boy.getHeight().toString());
+            element.put("Weight", boy.getWeight().toString());
+            element.put("Hobbit", boy.getHobbit().toString());
+            element.put("Hair color", boy.getHairColor());
+            element.put("Skill", boy.getSkill());
 
             row = sheet.createRow(rowCount++);
             colCount = 0;
-            for( int j=0; j< tittles.length; j++ )
-            {
+            for (int j = 0; j < tittles.length; j++) {
                 cell = row.createCell(colCount++);
                 //set style
-                XSSFCellStyle style=workbook.createCellStyle();
+                XSSFCellStyle style = workbook.createCellStyle();
                 Cell oldCell = templateRow.getCell(j);
                 style.cloneStyleFrom(oldCell.getCellStyle());
                 cell.setCellStyle(style);
@@ -156,19 +157,82 @@ public class ExcelServiceImpl implements ExcelService{
 
     }
 
-    public Row getRow(String pathname,Integer rowNum) throws Exception {
+    public Row getRow(String pathname, Integer rowNum) throws Exception {
         File file = new File(pathname);
 
         FileInputStream input = null;
         try {
             input = new FileInputStream(file);
         } catch (FileNotFoundException e) {
-            System.out.print("File "+pathname +"not found");
+            System.out.print("File " + pathname + "not found");
             e.printStackTrace();
         }
         XSSFWorkbook workbook = new XSSFWorkbook(input);
         XSSFSheet sheet = workbook.getSheetAt(0);
         Row headerRow = sheet.getRow(rowNum);
         return headerRow;
+    }
+
+    public FileOutputStream writeFromJson(String pathname, String templateFile, JSONArray jsonArray) throws Exception {
+
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Sheet1");
+
+        int rowCount = 0;
+        int colCount = 0;
+
+        Row row = sheet.createRow(rowCount++);
+        Cell cell = row.createCell(colCount++);
+
+        //set header row
+        Row templateHeaderRow = getRow(templateFile, 0);
+        int lastCell = templateHeaderRow.getLastCellNum();
+        String[] tittles = new String[lastCell];
+
+        for (int i = 0; i < lastCell; i++) {
+            Cell oldCell = templateHeaderRow.getCell(i);
+            String header = oldCell.getStringCellValue();
+
+            //set header cell style
+            XSSFCellStyle newCellStyle = workbook.createCellStyle();
+            newCellStyle.cloneStyleFrom(oldCell.getCellStyle());
+            cell.setCellStyle(newCellStyle);
+
+            //set header cell value
+            cell.setCellValue(oldCell.getStringCellValue());
+            tittles[i] = header;
+            cell = row.createCell(colCount++);
+        }
+
+
+        //set data rows
+        Row templateRow = getRow(templateFile, 1);
+
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            row = sheet.createRow(rowCount++);
+            colCount = 0;
+            JSONObject rec = (JSONObject) jsonArray.get(i);
+            for (int j = 0; j < tittles.length; j++) {
+
+                cell = row.createCell(colCount++);
+                //set style
+                XSSFCellStyle style = workbook.createCellStyle();
+                Cell oldCell = templateRow.getCell(j);
+                style.cloneStyleFrom(oldCell.getCellStyle());
+                cell.setCellStyle(style);
+
+                cell.setCellValue(rec.get(tittles[j].toLowerCase().replace(" ", "")).toString());
+            }
+        }
+
+        try (FileOutputStream outputStream = new FileOutputStream(pathname)) {
+            workbook.write(outputStream);
+            logger.info("Write completed");
+            return  outputStream;
+        } catch (IOException e) {
+            logger.info("Write error");
+            throw new Exception(e);
+        }
     }
 }

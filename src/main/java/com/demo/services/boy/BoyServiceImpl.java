@@ -1,6 +1,10 @@
 package com.demo.services.boy;
 
+import com.demo.controllers.DTO.AddBoyRequest;
 import com.demo.entities.Boy;
+import com.demo.repositories.BoyRepository;
+import io.swagger.models.auth.In;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -10,6 +14,8 @@ import java.util.Random;
 
 @Service
 public class BoyServiceImpl implements BoyService {
+    @Autowired
+    BoyRepository boyRepo;
 
     static String[] firstname = new String[]{
             "Đỗ", "Trần", "Bùi", "Chu", "Nguyễn", "Mai", "Lê", "Hoàng", "Lại"
@@ -38,6 +44,25 @@ public class BoyServiceImpl implements BoyService {
             listBoy.add(boy);
         }
         return listBoy;
+    }
+    public void save(Boy boy) {
+        boyRepo.save(boy);
+    }
+    public List<Boy> listAll(){
+        return (List<Boy>) boyRepo.findAll();
+    }
+    public Boy edit(long id, AddBoyRequest addBoyRequest){
+        Boy boy= boyRepo.findById(id).get();
+        boy.setName(addBoyRequest.getName());
+        boy.setAge(addBoyRequest.getAge());
+        boy.setCity(addBoyRequest.getCity());
+        boy.setHeight(addBoyRequest.getHeight());
+        boy.setWeight(addBoyRequest.getWeight());
+        boy.setHobbit(addBoyRequest.getHobbit());
+        boy.setHairColor(addBoyRequest.getHairColor());
+        boy.setSkill(addBoyRequest.getSkill());
+        boyRepo.save(boy);
+        return boy;
     }
 
 }
