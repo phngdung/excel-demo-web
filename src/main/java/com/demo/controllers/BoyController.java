@@ -76,10 +76,17 @@ public class BoyController {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
+//    @CrossOrigin(origins = "http://localhost:8080")
+//    @GetMapping("/boys/export")
+//    public ResponseEntity export(HttpServletResponse response) throws Exception {
+//        List<Boy> boyList = boyService.listAll();
+//        excelService.export(response, boyList);
+//        return new ResponseEntity<>("OK", HttpStatus.OK);
+//    }
+
     @CrossOrigin(origins = "http://localhost:8080")
-    @GetMapping("/boys/export")
-    public ResponseEntity export(HttpServletResponse response) throws Exception {
-        List<Boy> boyList = boyService.listAll();
+    @PostMapping ("/boys/export")
+    public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {
         excelService.export(response, boyList);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
