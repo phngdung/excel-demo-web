@@ -56,18 +56,46 @@ public class BoyCriteriaRepository {
                             "%" + boySearchCriteria.getName() + "%")
             );
         }
-        if(Objects.nonNull(boySearchCriteria.getAge())){
-            predicates.add(
-                    criteriaBuilder.like(boyRoot.get("age"),
-                            "%" + boySearchCriteria.getAge() + "%")
-            );
-        }
         if(Objects.nonNull(boySearchCriteria.getCity())){
             predicates.add(
                     criteriaBuilder.like(boyRoot.get("city"),
-                            "%" + boySearchCriteria.getAge() + "%")
+                            "%" + boySearchCriteria.getCity() + "%")
             );
         }
+        if(Objects.nonNull(boySearchCriteria.getAge())){
+            predicates.add(
+                    criteriaBuilder.equal(boyRoot.get("age"), boySearchCriteria.getAge())
+            );
+        }
+        if(Objects.nonNull(boySearchCriteria.getHeight())){
+            predicates.add(
+                    criteriaBuilder.equal(boyRoot.get("height"), boySearchCriteria.getHeight())
+            );
+        }
+        if(Objects.nonNull(boySearchCriteria.getWeight())){
+            predicates.add(
+                    criteriaBuilder.equal(boyRoot.get("weight"), boySearchCriteria.getWeight())
+            );
+        }
+        if(Objects.nonNull(boySearchCriteria.getHobbit())){
+            predicates.add(
+                    criteriaBuilder.like(boyRoot.get("hobbit"),
+                            "%" + boySearchCriteria.getHobbit() + "%")
+            );
+        }
+        if(Objects.nonNull(boySearchCriteria.getHairColor())){
+            predicates.add(
+                    criteriaBuilder.like(boyRoot.get("hairColor"),
+                            "%" + boySearchCriteria.getHairColor() + "%")
+            );
+        }
+        if(Objects.nonNull(boySearchCriteria.getSkill())){
+            predicates.add(
+                    criteriaBuilder.like(boyRoot.get("skill"),
+                            "%" + boySearchCriteria.getSkill() + "%")
+            );
+        }
+
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 

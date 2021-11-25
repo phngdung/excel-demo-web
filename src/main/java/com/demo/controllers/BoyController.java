@@ -1,20 +1,25 @@
 package com.demo.controllers;
 
+import ch.qos.logback.core.net.server.Client;
 import com.demo.controllers.DTO.AddBoyRequest;
 import com.demo.entities.Boy;
 import com.demo.entities.BoyPage;
 import com.demo.entities.BoySearchCriteria;
+import com.demo.exception.CustomException;
 import com.demo.repositories.BoyRepository;
 import com.demo.services.boy.BoyService;
 import com.demo.services.excel.ExcelService;
 import com.demo.services.json.JsonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -81,12 +86,24 @@ public class BoyController {
 
     @CrossOrigin(origins = "http://localhost:8080")
     @GetMapping("/boys/byOptions")
-    public ResponseEntity<Page<Boy>> getEmployees(BoyPage boyPage,
-                                                  BoySearchCriteria boySearchCriteria){
-        return new ResponseEntity<>(boyService.getBoysByOptions(boyPage, boySearchCriteria),
-                HttpStatus.OK);
+    public ResponseEntity<Page<Boy>> getEmployees(HttpServletResponse response,
+                                                  @RequestParam(value = "isExport", defaultValue = "false") boolean isExport,
+                                                  BoyPage boyPage,
+                                                  BoySearchCriteria boySearchCriteria) throws CustomException {
+        System.out.print(isExport);
+        List<Boy> result = new ArrayList<>();
+        Page<Boy> page= boyService.getBoysByOptions(boyPage, boySearchCriteria);
+        if(isExport) {
+            for (int i = 0; i < page.getTotalPages(); i++) {
+                result.addAll(page.getContent());
+            }
+            try {
+                excelService.export(response, result);
+            } catch (Exception e) {
+                 new CustomException("Cannot export excel file", 404);
+            }
+        }
+        return new ResponseEntity(page, HttpStatus.OK);
     }
-
-
 
 }
