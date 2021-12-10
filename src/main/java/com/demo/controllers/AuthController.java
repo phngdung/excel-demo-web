@@ -52,22 +52,19 @@ public class AuthController {
         return new ResponseEntity<>("Login successfully", HttpStatus.OK);
     }
 
-//    @CrossOrigin(origins = "http://localhost:8080")
-//    @GetMapping("/auth/logout")
-//    @ResponseBody
-//    public ResponseEntity logout(HttpSecurity http) throws Exception {
-//        http.logout(logout -> logout
-//                        .logoutUrl("/auth/logout")
-//                        .addLogoutHandler((request, response, auth) -> {
-//                            for (Cookie cookie : request.getCookies()) {
-//                                String cookieName = cookie.getName();
-//                                Cookie cookieToDelete = new Cookie(cookieName, null);
-//                                cookieToDelete.setMaxAge(0);
-//                                response.addCookie(cookieToDelete);
-//                            }
-//                        })
-//                );
-//        return new ResponseEntity<>("Logout", HttpStatus.OK);
-//    }
+    @CrossOrigin(origins = "http://localhost:8080")
+    @GetMapping("/auth/logout")
+    @ResponseBody
+    public ResponseEntity logout(HttpServletResponse response) throws Exception {
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        cookie.setSecure(true);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        //add cookie to response
+        response.addCookie(cookie);
+        return new ResponseEntity<>("Logout", HttpStatus.OK);
+    }
 
 }
