@@ -2,6 +2,8 @@ package com.demo.services.auth;
 
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.impl.JWTParser;
+import com.auth0.jwt.interfaces.Claim;
 import com.demo.config.Token;
 import com.demo.entities.User;
 import com.demo.exception.CustomException;
@@ -12,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Calendar;
 import java.util.Date;
@@ -44,21 +47,31 @@ public class AuthService {
             c.add(Calendar.DATE, Token.numOfDayJWTExp);
             expiration = c.getTime();
 
-            String token = createJWTToken(username, expiration);
+            String token = createJWTToken(user.getId()+"", expiration);
             return token;
 
         } else throw new CustomException("Password is incorrect ", 404);
     }
-    public String createJWTToken(String username, Date expiration) {
+
+    public String createJWTToken(String userId, Date expiration) {
         Algorithm signatureAlgorithm = Algorithm.HMAC256(Token.SECRET);
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         String token = JWT.create()
-                .withJWTId(username)
+                .withClaim("userId", userId)
                 .withIssuer("JWT_KEY")
                 .withExpiresAt(expiration)
                 .sign(signatureAlgorithm);
         return token;
+    }
+
+    public Long getUserFromCookie(HttpServletRequest req)  {
+
+        for (Cookie c : req.getCookies()) {
+            if (c.getName().equals("token")){
+            return Long.parseLong(JWT.decode(c.getValue()).getClaim("userId").asString()) ;
+        }}
+        return null;
     }
 }

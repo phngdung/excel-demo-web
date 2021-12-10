@@ -37,6 +37,8 @@ public class Friend {
         this.boy = boy;
     }
 
+    public Friend(){}
+
     public Friend(User user, Boy boy){
         this.user= user;
         this.boy=boy;

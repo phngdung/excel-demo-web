@@ -22,15 +22,21 @@ public class FriendService {
     @Autowired
     FriendRepository friendRepo;
 
-    public void addFriend(AddFriendRequest req) throws CustomException {
-        User user= userRepo.findById(req.getUserId()).orElseThrow(()-> new CustomException("User not found", 404));
-        Boy boy =boyRepo.findById(req.getBoyId()).orElseThrow(()->new CustomException("Boy not found",404));
+    public void addFriend(long userId, long boyId) throws CustomException {
+        friendRepo.findByUserIdAndBoyId(userId,boyId).ifPresent(
+               x -> new CustomException("That boy is already exists in yor list",404) );
+
+        User user= userRepo.findById(userId).orElseThrow(()-> new CustomException("User not found", 404));
+        Boy boy =boyRepo.findById(boyId).orElseThrow(()->new CustomException("Boy not found",404));
+
         Friend addFriend= new Friend(user, boy);
         friendRepo.save(addFriend);
     }
 
-    public void deleteFriend(long id) throws  CustomException{
-        Friend friend = friendRepo.findById(id).orElseThrow(()-> new CustomException("This friend not found", 404));
-        friendRepo.delete(friend);
-    }
+//    TODO deleteFriend
+
+//    public void deleteFriend(long id) throws  CustomException{
+//        Friend friend = friendRepo.findById(id).orElseThrow(()-> new CustomException("This friend not found", 404));
+//        friendRepo.deleteById(id);
+//    }
 }
