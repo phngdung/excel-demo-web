@@ -26,13 +26,13 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/me")
     public ResponseEntity getAllBoys() throws Exception {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://localhost:8081/login")
     @PostMapping("/auth/register")
     @ResponseBody
     public ResponseEntity register(@RequestBody UserRegisterRequest req) throws CustomException {
@@ -40,7 +40,7 @@ public class AuthController {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://localhost:8081/login")
     @PostMapping("/auth/login")
     @ResponseBody
     public ResponseEntity login(@RequestBody UserRegisterRequest req, HttpServletResponse response) throws CustomException {
@@ -52,7 +52,7 @@ public class AuthController {
         return new ResponseEntity<>("Login successfully", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8080")
+    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/auth/logout")
     @ResponseBody
     public ResponseEntity logout(HttpServletResponse response) throws Exception {
