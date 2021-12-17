@@ -1,6 +1,6 @@
 package com.demo.controllers;
 
-import com.demo.config.Token;
+import com.demo.config.WebSecurityConfig;
 import com.demo.controllers.DTO.UserRegisterRequest;
 import com.demo.entities.User;
 import com.demo.exception.CustomException;
@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Logger;
 
 @RestController
+@CrossOrigin(origins = "*")
 public class AuthController {
     Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -26,13 +27,11 @@ public class AuthController {
     @Autowired
     AuthService authService;
 
-    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/me")
     public ResponseEntity getAllBoys() throws Exception {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081/login")
     @PostMapping("/auth/register")
     @ResponseBody
     public ResponseEntity register(@RequestBody UserRegisterRequest req) throws CustomException {
@@ -40,19 +39,17 @@ public class AuthController {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081/login")
     @PostMapping("/auth/login")
     @ResponseBody
     public ResponseEntity login(@RequestBody UserRegisterRequest req, HttpServletResponse response) throws CustomException {
         String token = authService.login(req.getUsername(), req.getPassword());
         Integer numOfDay = 1;
         Cookie cookie = new Cookie("token", token);
-        cookie.setMaxAge(Token.numOfDayJWTExp * 24 * 60 * 60);
+        cookie.setMaxAge(WebSecurityConfig.numOfDayJWTExp * 24 * 60 * 60);
         response.addCookie(cookie);
         return new ResponseEntity<>("Login successfully", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/auth/logout")
     @ResponseBody
     public ResponseEntity logout(HttpServletResponse response) throws Exception {

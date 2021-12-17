@@ -35,8 +35,8 @@ public class FriendService {
 
 //    TODO deleteFriend
 
-//    public void deleteFriend(long id) throws  CustomException{
+    public void deleteFriend(long id) throws  CustomException{
 //        Friend friend = friendRepo.findById(id).orElseThrow(()-> new CustomException("This friend not found", 404));
 //        friendRepo.deleteById(id);
-//    }
+    }
 }

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan("com.demo.controllers")
 @ComponentScan("com.demo.services")
 @ComponentScan("com.demo.repositories")
+@ComponentScan("com.demo.config")
 @EnableJpaRepositories("com.demo.repositories")
 @SpringBootApplication
 public class Application {

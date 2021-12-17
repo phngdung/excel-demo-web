@@ -86,9 +86,9 @@ public class BoyService {
         boyRepo.deleteById(id);
     }
 
-    public List<Boy> getByOptions(String sortBy, String filterBy){
-        EntityManager em =  boyRepo.entityManager;
-        CriteriaBuilder cb =em.getCriteriaBuilder();
+    public List<Boy> getByOptions(String sortBy, String filterBy) {
+        EntityManager em = boyRepo.entityManager;
+        CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<Boy> cq = cb.createQuery(Boy.class);
         Root<Boy> pet = cq.from(Boy.class);
         cq.select(pet);
@@ -99,13 +99,13 @@ public class BoyService {
 
 
     public BoyService(BoyRepository boyRepository,
-                           BoyCriteriaRepository boyCriteriaRepository) {
+                      BoyCriteriaRepository boyCriteriaRepository) {
         this.boyRepository = boyRepository;
         this.boyCriteriaRepository = boyCriteriaRepository;
     }
 
     public Page<Boy> getBoysByOptions(BoyPage boyPage,
-                                  BoySearchCriteria boySearchCriteria){
+                                      BoySearchCriteria boySearchCriteria) {
         return boyCriteriaRepository.findAllWithFilters(boyPage, boySearchCriteria);
     }
 }

@@ -47,13 +47,13 @@ public class BoyController {
 
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @GetMapping("/boys")
     public ResponseEntity getAllBoys() throws Exception {
         return new ResponseEntity<>(boyService.listAll(), HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @PostMapping("/boys")
     public ResponseEntity addBoy(@RequestBody AddBoyRequest addBoyRequest) throws Exception {
         Boy newBoy = new Boy(addBoyRequest);
@@ -61,14 +61,14 @@ public class BoyController {
         return new ResponseEntity<>(newBoy, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @PutMapping("/boys/{id}")
     public ResponseEntity editBoy(@PathVariable long id, @RequestBody AddBoyRequest addBoyRequest) throws Exception {
         Boy boy = boyService.edit(id, addBoyRequest);
         return new ResponseEntity<>(boy, HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @GetMapping("/boys/delete/{id}")
     @ResponseBody
     public ResponseEntity deleteBoy(@PathVariable long id) throws Exception {
@@ -76,7 +76,7 @@ public class BoyController {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-//    @CrossOrigin(origins = "http://localhost:8081")
+//    
 //    @GetMapping("/boys/export")
 //    public ResponseEntity export(HttpServletResponse response) throws Exception {
 //        List<Boy> boyList = boyService.listAll();
@@ -84,14 +84,14 @@ public class BoyController {
 //        return new ResponseEntity<>("OK", HttpStatus.OK);
 //    }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @PostMapping ("/boys/export")
     public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {
         excelService.export(response, boyList);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
+    
     @GetMapping("/boys/byOptions")
     public ResponseEntity<Page<Boy>> getEmployees(HttpServletResponse response,
                                                   @RequestParam(value = "isExport", defaultValue = "false") boolean isExport,

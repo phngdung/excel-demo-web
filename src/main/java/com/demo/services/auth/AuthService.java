@@ -4,12 +4,13 @@ import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.impl.JWTParser;
 import com.auth0.jwt.interfaces.Claim;
-import com.demo.config.Token;
+import com.demo.config.WebSecurityConfig;
 import com.demo.entities.User;
 import com.demo.exception.CustomException;
 import com.demo.repositories.UserRepository;
 import com.sun.security.auth.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -44,34 +45,31 @@ public class AuthService {
             Date expiration = new Date();
             Calendar c = Calendar.getInstance();
             c.setTime(expiration);
-            c.add(Calendar.DATE, Token.numOfDayJWTExp);
+            c.add(Calendar.DATE, WebSecurityConfig.numOfDayJWTExp);
             expiration = c.getTime();
 
-            String token = createJWTToken(user.getId()+"", expiration);
+            String token = createJWTToken(user.getId() + "", expiration);
             return token;
 
         } else throw new CustomException("Password is incorrect ", 404);
     }
 
     public String createJWTToken(String userId, Date expiration) {
-        Algorithm signatureAlgorithm = Algorithm.HMAC256(Token.SECRET);
+        Algorithm signatureAlgorithm = Algorithm.HMAC256(WebSecurityConfig.TOKEN_SECRET);
 
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         String token = JWT.create()
-                .withClaim("userId", userId)
-                .withIssuer("JWT_KEY")
+                .withJWTId(userId)
+                .withIssuer(WebSecurityConfig.TOKEN_ISSUER)
                 .withExpiresAt(expiration)
                 .sign(signatureAlgorithm);
         return token;
     }
 
-    public Long getUserFromCookie(HttpServletRequest req)  {
-
-        for (Cookie c : req.getCookies()) {
-            if (c.getName().equals("token")){
-            return Long.parseLong(JWT.decode(c.getValue()).getClaim("userId").asString()) ;
-        }}
-        return null;
+    public Long getCurrentUser() {
+        Long userId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
+        return userId;
     }
+
 }
