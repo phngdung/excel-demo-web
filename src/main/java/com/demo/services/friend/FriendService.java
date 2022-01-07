@@ -1,6 +1,5 @@
 package com.demo.services.friend;
 
-import com.demo.controllers.DTO.AddFriendRequest;
 import com.demo.entities.Boy;
 import com.demo.entities.Friend;
 import com.demo.entities.User;
@@ -22,20 +21,20 @@ public class FriendService {
     @Autowired
     FriendRepository friendRepo;
 
-    public void addFriend(long userId, long boyId) throws CustomException {
-        friendRepo.findByUserIdAndBoyId(userId,boyId).ifPresent(
-               x -> new CustomException("That boy is already exists in yor list",404) );
+    public void addFriendById(long userId, long boyId) throws CustomException {
+        friendRepo.findByUserIdAndBoyId(userId, boyId).ifPresent(
+                x -> new CustomException("That boy is already exists in yor list", 404));
 
-        User user= userRepo.findById(userId).orElseThrow(()-> new CustomException("User not found", 404));
-        Boy boy =boyRepo.findById(boyId).orElseThrow(()->new CustomException("Boy not found",404));
+        User user = userRepo.findById(userId).orElseThrow(() -> new CustomException("User not found", 404));
+        Boy boy = boyRepo.findById(boyId).orElseThrow(() -> new CustomException("Boy not found", 404));
 
-        Friend addFriend= new Friend(user, boy);
+        Friend addFriend = new Friend(user, boy);
         friendRepo.save(addFriend);
     }
 
 //    TODO deleteFriend
 
-    public void deleteFriend(long id) throws  CustomException{
+    public void deleteFriend(long id) throws CustomException {
 //        Friend friend = friendRepo.findById(id).orElseThrow(()-> new CustomException("This friend not found", 404));
 //        friendRepo.deleteById(id);
     }

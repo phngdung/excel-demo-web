@@ -9,7 +9,6 @@ import com.demo.services.auth.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -47,7 +46,7 @@ public class AuthController {
         Cookie cookie = new Cookie("token", token);
         cookie.setMaxAge(WebSecurityConfig.numOfDayJWTExp * 24 * 60 * 60);
         response.addCookie(cookie);
-        return new ResponseEntity<>("Login successfully", HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
 
     @GetMapping("/auth/logout")

@@ -33,6 +33,12 @@ public class CorsFilter extends OncePerRequestFilter {
         if (WebUtils.getCookie(request, WebSecurityConfig.TOKEN_NAME) != null) {
             return WebUtils.getCookie(request, WebSecurityConfig.TOKEN_NAME).getValue();
         }
+        if (request.getParameter(WebSecurityConfig.TOKEN_NAME) != null) {
+            return request.getParameter(WebSecurityConfig.TOKEN_NAME);
+        }
+        if (request.getHeader(WebSecurityConfig.TOKEN_NAME) != null) {
+            return request.getHeader(WebSecurityConfig.TOKEN_NAME);
+        }
         return null;
     }
 

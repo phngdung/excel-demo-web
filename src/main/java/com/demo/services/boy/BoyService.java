@@ -82,6 +82,12 @@ public class BoyService {
         return boy;
     }
 
+    public Boy add( AddBoyRequest addBoyRequest) {
+        Boy newBoy= new Boy(addBoyRequest);
+        boyRepo.save(newBoy);
+        return newBoy;
+    }
+
     public void delete(long id) {
         boyRepo.deleteById(id);
     }

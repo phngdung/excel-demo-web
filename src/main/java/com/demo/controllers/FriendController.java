@@ -1,6 +1,7 @@
 package com.demo.controllers;
 
 import com.demo.config.WebSecurityConfig;
+import com.demo.controllers.DTO.AddBoyRequest;
 import com.demo.entities.Boy;
 import com.demo.entities.Friend;
 import com.demo.exception.CustomException;
@@ -8,10 +9,12 @@ import com.demo.repositories.BoyRepository;
 import com.demo.repositories.FriendRepository;
 import com.demo.repositories.UserRepository;
 import com.demo.services.auth.AuthService;
+import com.demo.services.boy.BoyService;
 import com.demo.services.friend.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class FriendController {
     public HttpServletRequest req;
@@ -38,6 +42,9 @@ public class FriendController {
 
     @Autowired
     AuthService authService;
+
+    @Autowired
+    BoyService boyService;
     
     @GetMapping("/friends")
     public ResponseEntity getAll() throws CustomException {
@@ -54,14 +61,22 @@ public class FriendController {
     }
 
     @GetMapping("/friends/add/{boyId}")
-    public ResponseEntity add(@PathVariable long boyId, HttpServletRequest servletReq) throws CustomException {
+    public ResponseEntity add(@PathVariable long boyId) throws CustomException {
         Long userId = authService.getCurrentUser();
-        friendService.addFriend(userId, boyId);
+        friendService.addFriendById(userId, boyId);
+        return new ResponseEntity("Added this boy to your list", HttpStatus.OK);
+    }
+    @PostMapping("/friends/add")
+    public ResponseEntity add(@RequestBody AddBoyRequest req) throws CustomException {
+        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long userId= Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        Boy newBoy= boyService.add(req);
+        friendService.addFriendById(userId, newBoy.getId());
         return new ResponseEntity("Added this boy to your list", HttpStatus.OK);
     }
 
 
-    @GetMapping("/friend/delete/{id}")
+    @GetMapping("/friends/delete/{id}")
     public ResponseEntity delete(@PathVariable long id) throws CustomException {
         friendService.deleteFriend(id);
         return new ResponseEntity("OK", HttpStatus.OK);

@@ -68,6 +68,7 @@ public class AuthService {
     }
 
     public Long getCurrentUser() {
+        System.out.print("token :"+SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString() );
         Long userId = Long.parseLong(SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString());
         return userId;
     }

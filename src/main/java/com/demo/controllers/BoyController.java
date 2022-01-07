@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class BoyController {
     Logger logger = Logger.getLogger(this.getClass().getName());
