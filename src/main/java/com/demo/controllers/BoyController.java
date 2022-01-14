@@ -77,14 +77,6 @@ public class BoyController {
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
-//    
-//    @GetMapping("/boys/export")
-//    public ResponseEntity export(HttpServletResponse response) throws Exception {
-//        List<Boy> boyList = boyService.listAll();
-//        excelService.export(response, boyList);
-//        return new ResponseEntity<>("OK", HttpStatus.OK);
-//    }
-
     
     @PostMapping ("/boys/export")
     public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {

@@ -10,6 +10,7 @@ import com.demo.repositories.FriendRepository;
 import com.demo.repositories.UserRepository;
 import com.demo.services.auth.AuthService;
 import com.demo.services.boy.BoyService;
+import com.demo.services.excel.ExcelService;
 import com.demo.services.friend.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -45,6 +47,10 @@ public class FriendController {
 
     @Autowired
     BoyService boyService;
+
+    @Autowired
+    ExcelService excelService;
+
     
     @GetMapping("/friends")
     public ResponseEntity getAll() throws CustomException {
@@ -80,6 +86,12 @@ public class FriendController {
     public ResponseEntity delete(@PathVariable long id) throws CustomException {
         friendService.deleteFriend(id);
         return new ResponseEntity("OK", HttpStatus.OK);
+    }
+
+    @PostMapping ("/friends/export")
+    public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {
+        excelService.export(response, boyList);
+        return new ResponseEntity<>("OK", HttpStatus.OK);
     }
 
 }
