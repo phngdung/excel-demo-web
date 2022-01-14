@@ -222,6 +222,7 @@ public class ExcelServiceImpl implements ExcelService {
             row = sheet.createRow(rowCount++);
             colCount = 0;
             JSONObject rec = (JSONObject) jsonArray.get(i);
+            logger.info("jsonArray: "+ rec.toString()+"\n\n");
             for (int j = 0; j < tittles.length; j++) {
 
                 cell = row.createCell(colCount++);
@@ -230,8 +231,13 @@ public class ExcelServiceImpl implements ExcelService {
                 Cell oldCell = templateRow.getCell(j);
                 style.cloneStyleFrom(oldCell.getCellStyle());
                 cell.setCellStyle(style);
+                Object oValue= rec.get(tittles[j].toLowerCase().replace(" ",""));
+//                logger.info("title: "+ tittles[j]+ " rec: "+  +"\n");
+                if(oValue !=null ){
+                    cell.setCellValue(oValue.toString());
+                }
 
-                cell.setCellValue(rec.get(tittles[j].toLowerCase().replace(" ", "")).toString());
+
             }
         }
         workbook.write(outputStream);

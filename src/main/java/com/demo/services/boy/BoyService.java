@@ -91,6 +91,9 @@ public class BoyService {
     public void delete(long id) {
         boyRepo.deleteById(id);
     }
+    public Boy get(long id) {
+        return boyRepo.findById(id).get();
+    }
 
     public List<Boy> getByOptions(String sortBy, String filterBy) {
         EntityManager em = boyRepo.entityManager;

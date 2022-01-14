@@ -59,11 +59,11 @@ public class CorsFilter extends OncePerRequestFilter {
                     JWT.require(algorithm).withIssuer(WebSecurityConfig.TOKEN_ISSUER).build();
             DecodedJWT jwt = verifier.verify(token);
             String userId = jwt.getId();
-            log.info("Logged user id " + userId);
+//            log.info("Logged user id " + userId);
             SecurityContextHolder.getContext()
                     .setAuthentication(new UsernamePasswordAuthenticationToken(userId, null, emptyList()));
         } catch (Exception e) {
-            log.warning("decode token ex : " + e.getMessage());
+//            log.warning("decode token ex : " + e.getMessage());
         }
 
         HttpServletResponse res = (HttpServletResponse) response;

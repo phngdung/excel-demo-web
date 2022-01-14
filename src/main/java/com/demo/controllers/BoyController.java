@@ -68,7 +68,11 @@ public class BoyController {
         Boy boy = boyService.edit(id, addBoyRequest);
         return new ResponseEntity<>(boy, HttpStatus.OK);
     }
-
+    @GetMapping("/boys/{id}")
+    public ResponseEntity editBoy(@PathVariable long id) throws Exception {
+        Boy boy = boyService.get(id);
+        return new ResponseEntity<>(boy, HttpStatus.OK);
+    }
     
     @GetMapping("/boys/delete/{id}")
     @ResponseBody
@@ -76,14 +80,6 @@ public class BoyController {
         boyService.delete(id);
         return new ResponseEntity<>("OK", HttpStatus.OK);
     }
-
-    
-    @PostMapping ("/boys/export")
-    public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {
-        excelService.export(response, boyList);
-        return new ResponseEntity<>("OK", HttpStatus.OK);
-    }
-
     
     @GetMapping("/boys/byOptions")
     public ResponseEntity<Page<Boy>> getEmployees(HttpServletResponse response,

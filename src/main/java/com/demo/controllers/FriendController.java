@@ -51,7 +51,7 @@ public class FriendController {
     @Autowired
     ExcelService excelService;
 
-    
+
     @GetMapping("/friends")
     public ResponseEntity getAll() throws CustomException {
         Long userId = authService.getCurrentUser();
@@ -59,7 +59,8 @@ public class FriendController {
         List<Boy> boyList = new ArrayList<>();
         iterable.forEach(
                 friend -> {
-                    boyList.add(friend.getBoy());
+                    if (!friend.isDelete())
+                        boyList.add(friend.getBoy());
                 }
         );
         return new ResponseEntity(boyList, HttpStatus.OK);
@@ -68,15 +69,16 @@ public class FriendController {
 
     @GetMapping("/friends/add/{boyId}")
     public ResponseEntity add(@PathVariable long boyId) throws CustomException {
-        Long userId = authService.getCurrentUser();
+        long userId = Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         friendService.addFriendById(userId, boyId);
         return new ResponseEntity("Added this boy to your list", HttpStatus.OK);
     }
+
     @PostMapping("/friends/add")
     public ResponseEntity add(@RequestBody AddBoyRequest req) throws CustomException {
-        Object principal= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        long userId= Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        Boy newBoy= boyService.add(req);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long userId = Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        Boy newBoy = boyService.add(req);
         friendService.addFriendById(userId, newBoy.getId());
         return new ResponseEntity("Added this boy to your list", HttpStatus.OK);
     }
@@ -84,11 +86,13 @@ public class FriendController {
 
     @GetMapping("/friends/delete/{id}")
     public ResponseEntity delete(@PathVariable long id) throws CustomException {
-        friendService.deleteFriend(id);
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        long userId = Long.parseLong((String) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        friendService.deleteFriend(userId, id);
         return new ResponseEntity("OK", HttpStatus.OK);
     }
 
-    @PostMapping ("/friends/export")
+    @PostMapping("/friends/export")
     public ResponseEntity export(@RequestBody List<Boy> boyList, HttpServletResponse response) throws Exception {
         excelService.export(response, boyList);
         return new ResponseEntity<>("OK", HttpStatus.OK);
